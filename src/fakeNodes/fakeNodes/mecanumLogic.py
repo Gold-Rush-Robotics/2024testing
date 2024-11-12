@@ -10,12 +10,7 @@ class mecanumLogic(Node):
         super().__init__('mecanum_logic_tester')
         self.cmd_vel_publisher = self.create_publisher(Twist, 'cmd_vel', 10)
         self.joint_state_subscriber = self.create_subscription(JointJog, 'joint_jog', self.joint_jog_callback, 10)
-
-
-        timer_period = 5  # seconds
-        self.timer = self.create_timer(timer_period, self.timer_callback)
-        self.i = -1
-
+        
         #declare messages
         self.cmd0 = Twist() #do nothing
 
@@ -31,6 +26,12 @@ class mecanumLogic(Node):
 
         self.cmd4 = Twist() #rotate counterclockwise
         self.cmd4.angular.z = 0.5
+        
+        self.i = -1
+
+        self.timer_callback()
+        timer_period = 5  # seconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
 
 
     def timer_callback(self):
@@ -51,19 +52,20 @@ class mecanumLogic(Node):
         fr = velos["front_right_wheel"]
         bl = velos["back_left_wheel"]
         br = velos["back_right_wheel"]
+        print(f"{self.i} {fl} {fr} {bl} {br}")
         match (self.i % 5):
             case 0: #do nothing
-                assert(fl == fr == bl == br == 0, f"Wheels are moving when they shouldnt be {fl} {fr} {bl} {br}")
+                assert fl == fr == bl == br == 0, f"Wheels are moving when they shouldnt be {fl} {fr} {bl} {br}"
             case 1: #drive forward
-                assert(fl >= 0 and fr >= 0 and bl >= 0 and br >= 0, f"{fl} {fr} {bl} {br}")
+                assert fl > 0 and fr > 0 and bl > 0 and br > 0, f"{fl} {fr} {bl} {br}"
             case 2: #drive left
-                assert(fl <= 0 and fr >= 0 and bl >= 0 and br <= 0, f"not sure the signs are right here {fl} {fr} {bl} {br}")
+                assert fl < 0 and fr > 0 and bl > 0 and br < 0, f"not sure the signs are right here {fl} {fr} {bl} {br}"
             case 3: #drive right and backwards
-                assert(fl == 0 and fr <= 0 and bl <= 0 and br == 0, f"{fl} {fr} {bl} {br}")
+                assert fl == 0 and fr < 0 and bl < 0 and br == 0, f"{fl} {fr} {bl} {br}"
             case 4: #rotate counterclockwise
-                assert(fl <= 0 and fr >= 0 and bl <= 0 and br >= 0, f"{fl} {fr} {bl} {br}")
+                assert fl < 0 and fr > 0 and bl < 0 and br > 0, f"{fl} {fr} {bl} {br}"
             case _:
-                assert(False, "something went wrong with cases")
+                assert False, "something went wrong with cases"
 
 
 def main(args=None):
