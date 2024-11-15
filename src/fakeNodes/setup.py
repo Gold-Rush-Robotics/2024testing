@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'mecanumLogic = fakeNodes.mecanumLogic:main'
+            'mecanumLogic = fakeNodes.mecanumLogic:main',
+            'mecanumFK = fakeNodes.mecanumFK:main'
         ],
     },
 )
