@@ -6,12 +6,12 @@ from sensor_msgs.msg import JointState
 from control_msgs.msg import JointJog
 
 
-class MinimalPublisher(Node):
+class MecanumController(Node):
 
     def __init__(self):
-        super().__init__('minimal_publisher')
+        super().__init__('mecanum_controller')
         self.cmd_vel_sub = self.create_subscription(Twist, 'cmd_vel', self.mecanumController, 10)
-        self.joint_state_pub = self.create_publisher(JointState, 'joint_states', 10)
+        self.joint_jog_pub = self.create_publisher(JointJog, 'joint_jogs', 10)
 
     def mecanumController(self, msg):
         '''
@@ -38,7 +38,12 @@ class MinimalPublisher(Node):
 
         #publish jointJogs
         msg = JointJog()
-        
+        msg.joint_names = ["front_left_wheel", "front_right_wheel", "back_left_wheel", "back_right_wheel"]
+        msg.velocities = [powerFL, powerFR, powerBL, powerBR]
+        msg.duration = 2 #I have no idea what this number does please advise
+        self.joint_state_pub
+
+
 
 
         
@@ -51,7 +56,7 @@ class MinimalPublisher(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    minimal_publisher = MinimalPublisher()
+    minimal_publisher = MecanumController()
 
     rclpy.spin(minimal_publisher)
 
